@@ -30,7 +30,7 @@ namespace Vehiculos.App.Controllers
             var personasFromApi = await _personaService.GetPersonasAsync();
             var personasDto = _mapper.Map<IEnumerable<PersonaDto>>(personasFromApi.data);
     
-            // Add a property to the model, and create the dropdown
+            // Create a viewmodel, and create the dropdown
             ViewBag.Personas = personasDto;
 
             return View(await _context.Vehiculos.ToListAsync());
