@@ -3,8 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Vehiculos.AccesoDatos;
+using Vehiculos.App.Models;
 using Vehiculos.Modelos;
 using Vehiculos.Modelos.Dto;
 using Vehiculos.Models;
@@ -28,19 +30,12 @@ namespace Vehiculos.App.Controllers
         // GET: Vehiculo
         public async Task<IActionResult> Index()
         {
-            var personasFromApi = await _personaService.GetPersonasAsync();
+            var personasDto = await GetPersonaDtos();
+            var vehiculosDB = await _context.Vehiculos.ToListAsync();
+            var vehiculos = _mapper.Map<IEnumerable<VehiculoViewModel>>(vehiculosDB).ToList();
+            vehiculos.ForEach(x => x.Titular = personasDto.FirstOrDefault(y => y.Value == x.TitularId.ToString()).Text);
 
-            var personas = new List<Datos>();
-
-            var datos = personasFromApi.Select(x => x.data);
-            datos.ToList().ForEach(x => personas.AddRange(x));
-
-            var personasDto = _mapper.Map<IEnumerable<PersonaDto>>(personas);
-
-            //// Create a viewmodel, and create the dropdown
-            ViewBag.Personas = personasDto;
-
-            return View(await _context.Vehiculos.ToListAsync());
+            return View(vehiculos);
         }
 
         // GET: Vehiculo/Details/5
@@ -58,22 +53,29 @@ namespace Vehiculos.App.Controllers
                 return NotFound();
             }
 
-            return View(vehiculo);
+            var personasDto = await GetPersonaDtos();
+            var vehiculoViewModel = _mapper.Map<VehiculoViewModel>(vehiculo);
+            vehiculoViewModel.Titular = personasDto.FirstOrDefault(y => y.Value == vehiculo.TitularId.ToString()).Text;
+
+            return View(vehiculoViewModel);
         }
 
         // GET: Vehiculo/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var vehiculo = new VehiculoCreateViewModel();
+            var personasDto = await GetPersonaDtos();
+
+            vehiculo.TitularLista = personasDto;
+            return View(vehiculo);
         }
 
         // POST: Vehiculo/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VehiculoId,Patente,Marca,Modelo,Puertas,Titular")] Vehiculo vehiculo)
+        public async Task<IActionResult> Create([Bind("VehiculoId,Patente,Marca,Modelo,Puertas,TitularId")] VehiculoCreateViewModel vehiculoViewModel)
         {
+            var vehiculo = _mapper.Map<Vehiculo>(vehiculoViewModel);
             if (ModelState.IsValid)
             {
                 _context.Add(vehiculo);
@@ -91,19 +93,27 @@ namespace Vehiculos.App.Controllers
                 return NotFound();
             }
 
-            var vehiculo = await _context.Vehiculos.FindAsync(id);
-            if (vehiculo == null)
+            var vehiculoDb = await _context.Vehiculos.FindAsync(id);
+            if (vehiculoDb == null)
             {
                 return NotFound();
             }
+
+            var vehiculo = _mapper.Map<VehiculoCreateViewModel>(vehiculoDb);
+            var personasDto = await GetPersonaDtos();
+
+            // Create a viewmodel, and create the dropdown
+            vehiculo.TitularLista = personasDto;
+            vehiculo.TitularId = vehiculoDb.TitularId;
             return View(vehiculo);
         }
 
         // POST: Vehiculo/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VehiculoId,Patente,Marca,Modelo,Puertas,Titular")] Vehiculo vehiculo)
+        public async Task<IActionResult> Edit(int id, [Bind("VehiculoId,Patente,Marca,Modelo,Puertas,TitularId")] VehiculoCreateViewModel vehiculoViewModel)
         {
+            var vehiculo = _mapper.Map<Vehiculo>(vehiculoViewModel);
             if (id != vehiculo.VehiculoId)
             {
                 return NotFound();
@@ -140,14 +150,18 @@ namespace Vehiculos.App.Controllers
                 return NotFound();
             }
 
-            var vehiculo = await _context.Vehiculos
+            var vehiculoDb = await _context.Vehiculos
                 .FirstOrDefaultAsync(m => m.VehiculoId == id);
-            if (vehiculo == null)
+            if (vehiculoDb == null)
             {
                 return NotFound();
             }
 
-            return View(vehiculo);
+            var vehiculoViewModel = _mapper.Map<VehiculoViewModel>(vehiculoDb);
+            var personasDto = await GetPersonaDtos();
+            vehiculoViewModel.Titular = personasDto.FirstOrDefault(y => y.Value == vehiculoDb.TitularId.ToString()).Text;
+
+            return View(vehiculoViewModel);
         }
 
         // POST: Vehiculo/Delete/5
@@ -165,5 +179,23 @@ namespace Vehiculos.App.Controllers
         {
             return _context.Vehiculos.Any(e => e.VehiculoId == id);
         }
+
+        private async Task<IEnumerable<SelectListItem>> GetPersonaDtos()
+        {
+            var personasFromApi = await _personaService.GetPersonasAsync();
+
+            var personas = new List<Datos>();
+
+            var datos = personasFromApi.Select(x => x.data);
+            datos.ToList().ForEach(x => personas.AddRange(x));
+
+            var personasDto = _mapper.Map<IEnumerable<PersonaDto>>(personas);
+            return personasDto.Select(i => new SelectListItem()
+            {
+                Text = i.NombreCompleto,
+                Value = i.Id.ToString()
+            });
+        }
+
     }
 }

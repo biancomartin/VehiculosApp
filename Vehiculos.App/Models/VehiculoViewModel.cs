@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Vehiculos.Models
+﻿namespace Vehiculos.App.Models
 {
-    public class Vehiculo
+    public class VehiculoViewModel
     {
-        [Key]
         public int VehiculoId { get; set; }
 
         public string Patente { get; set; }
@@ -14,6 +11,8 @@ namespace Vehiculos.Models
         public string Modelo { get; set; }
 
         public int Puertas { get; set; }
+
+        public string Titular { get; set; }
 
         public int TitularId { get; set; }
     }

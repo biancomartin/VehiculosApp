@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Vehiculos.App.Models;
 using Vehiculos.Modelos;
 using Vehiculos.Modelos.Dto;
+using Vehiculos.Models;
 
 namespace Vehiculos.App.Mapping
 {
@@ -21,6 +23,11 @@ namespace Vehiculos.App.Mapping
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.id));
+
+            CreateMap<VehiculoCreateViewModel, Vehiculo>()
+                .ReverseMap();
+
+            CreateMap<VehiculoViewModel, Vehiculo>().ReverseMap();
         }
     }
 }
