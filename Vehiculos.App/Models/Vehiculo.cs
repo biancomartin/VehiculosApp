@@ -4,20 +4,23 @@ namespace Vehiculos.App.Models
 {
     public class Vehiculo
     {
+        [Key]
+        public int VehiculoId { get; set; }
+
         [StringLength(maximumLength: 8, MinimumLength = 8, ErrorMessage = "La patente requiere 8 caracteres")]
-        [Required]
+        [Required(ErrorMessage = "La patente es obligatoria en cada vehiculo")]
         public string Patente { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Especifique la marca del vehiculo")]
         public string Marca { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Indique el modelo del vehiculo")]
         public string Modelo { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Indique el numero de puertas")]
         public int Puertas { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Ingrese el nombre del propietario del auto")]
         public string Titular { get; set; }
 
     }
