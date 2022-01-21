@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vehiculos.AccesoDatos;
+using Vehiculos.Servicios;
+using Vehiculos.Servicios.Interfaces;
 
 namespace Vehiculos.App
 {
@@ -24,6 +26,8 @@ namespace Vehiculos.App
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddScoped<IPersonaService, PersonaService>();
 
             services.AddControllersWithViews();
         }

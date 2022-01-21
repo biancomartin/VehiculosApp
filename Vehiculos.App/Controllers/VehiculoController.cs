@@ -4,21 +4,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vehiculos.AccesoDatos;
 using Vehiculos.Models;
+using Vehiculos.Servicios.Interfaces;
 
 namespace Vehiculos.App.Controllers
 {
     public class VehiculoController : Controller
     {
         private readonly ApplicationContext _context;
+        private readonly IPersonaService _personaService;
 
-        public VehiculoController(ApplicationContext context)
+        public VehiculoController(ApplicationContext context, IPersonaService personaService)
         {
             _context = context;
+            _personaService = personaService;
         }
 
         // GET: Vehiculo
         public async Task<IActionResult> Index()
         {
+            var personas = await _personaService.GetPersonasAsync();
             return View(await _context.Vehiculos.ToListAsync());
         }
 
