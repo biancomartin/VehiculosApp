@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vehiculos.AccesoDatos;
+using Vehiculos.App.Mapping;
 using Vehiculos.Servicios;
 using Vehiculos.Servicios.Interfaces;
 
@@ -27,7 +29,24 @@ namespace Vehiculos.App
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+            #region Dependency Injection
+
             services.AddScoped<IPersonaService, PersonaService>();
+
+            #endregion
+
+            #region AutoMapper
+
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            #endregion
+
 
             services.AddControllersWithViews();
         }

@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vehiculos.AccesoDatos;
+using Vehiculos.Modelos.Dto;
 using Vehiculos.Models;
 using Vehiculos.Servicios.Interfaces;
 
@@ -12,17 +15,20 @@ namespace Vehiculos.App.Controllers
     {
         private readonly ApplicationContext _context;
         private readonly IPersonaService _personaService;
+        private readonly IMapper _mapper;
 
-        public VehiculoController(ApplicationContext context, IPersonaService personaService)
+        public VehiculoController(ApplicationContext context, IPersonaService personaService, IMapper mapper)
         {
             _context = context;
             _personaService = personaService;
+            _mapper = mapper;
         }
 
         // GET: Vehiculo
         public async Task<IActionResult> Index()
         {
-            var personas = await _personaService.GetPersonasAsync();
+            var personasFromApi = await _personaService.GetPersonasAsync();
+            var personasDto = _mapper.Map<IEnumerable<PersonaDto>>(personasFromApi.data);
             return View(await _context.Vehiculos.ToListAsync());
         }
 
