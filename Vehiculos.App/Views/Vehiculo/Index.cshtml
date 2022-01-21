@@ -1,13 +1,13 @@
-﻿@model IEnumerable<Vehiculos.App.Models.Vehiculo>
+﻿@model IEnumerable<Vehiculos.Models.Vehiculo>
 
 @{
     ViewData["Title"] = "Vehiculos";
 }
 
-<h1>Index</h1>
+<h1>Listado de Vehiculos</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Agregar nuevo vehiculo</a>
 </p>
 <table class="table">
     <thead>
@@ -49,9 +49,9 @@
                 @Html.DisplayFor(modelItem => item.Titular)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.VehiculoId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.VehiculoId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.VehiculoId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.VehiculoId">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.VehiculoId">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.VehiculoId">Eliminar</a>
             </td>
         </tr>
 }

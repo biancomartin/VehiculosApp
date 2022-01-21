@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Vehiculos.App.Models;
+using Vehiculos.Models;
 
-namespace Vehiculos.App.Data
+namespace Vehiculos.AccesoDatos
 {
     public class ApplicationContext : DbContext
     {

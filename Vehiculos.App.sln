@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vehiculos.App", "Vehiculos.App\Vehiculos.App.csproj", "{7BF806C4-16CE-4334-A366-2384E421A03A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vehiculos.Modelos", "Vehiculos.Models\Vehiculos.Modelos.csproj", "{CD675057-E43E-49E3-A352-18BF0E156144}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vehiculos.AccesoDatos", "Vehiculos.AccesoDatos\Vehiculos.AccesoDatos.csproj", "{AADD0AEE-989B-4CBF-81E0-5FB67132151A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{7BF806C4-16CE-4334-A366-2384E421A03A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BF806C4-16CE-4334-A366-2384E421A03A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BF806C4-16CE-4334-A366-2384E421A03A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD675057-E43E-49E3-A352-18BF0E156144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD675057-E43E-49E3-A352-18BF0E156144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD675057-E43E-49E3-A352-18BF0E156144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD675057-E43E-49E3-A352-18BF0E156144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AADD0AEE-989B-4CBF-81E0-5FB67132151A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AADD0AEE-989B-4CBF-81E0-5FB67132151A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AADD0AEE-989B-4CBF-81E0-5FB67132151A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AADD0AEE-989B-4CBF-81E0-5FB67132151A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

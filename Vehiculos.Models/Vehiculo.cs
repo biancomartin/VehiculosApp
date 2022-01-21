@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Vehiculos.App.Models
+
+namespace Vehiculos.Models
 {
     public class Vehiculo
     {
@@ -17,6 +18,7 @@ namespace Vehiculos.App.Models
         [Required(ErrorMessage = "Indique el modelo del vehiculo")]
         public string Modelo { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Por favor ingrese un numero mayor a {1}")]
         [Required(ErrorMessage = "Indique el numero de puertas")]
         public int Puertas { get; set; }
 
