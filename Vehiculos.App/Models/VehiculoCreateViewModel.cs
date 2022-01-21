@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Vehiculos.Modelos.Dto;
 
 namespace Vehiculos.App.Models
 {

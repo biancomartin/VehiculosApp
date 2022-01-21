@@ -5,7 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Vehiculos.AccesoDatos;
+using Vehiculos.AccesoDatos.Repositorios.Interfaces;
 using Vehiculos.App.Models;
 using Vehiculos.Modelos;
 using Vehiculos.Modelos.Dto;
@@ -16,13 +16,13 @@ namespace Vehiculos.App.Controllers
 {
     public class VehiculoController : Controller
     {
-        private readonly ApplicationContext _context;
+        private readonly IVehiculoRepository _vehiculoRepository;
         private readonly IPersonaService _personaService;
         private readonly IMapper _mapper;
 
-        public VehiculoController(ApplicationContext context, IPersonaService personaService, IMapper mapper)
+        public VehiculoController(IVehiculoRepository vehiculoRepository, IPersonaService personaService, IMapper mapper)
         {
-            _context = context;
+            _vehiculoRepository = vehiculoRepository;
             _personaService = personaService;
             _mapper = mapper;
         }
@@ -30,8 +30,8 @@ namespace Vehiculos.App.Controllers
         // GET: Vehiculo
         public async Task<IActionResult> Index()
         {
-            var personasDto = await GetPersonaDtos();
-            var vehiculosDB = await _context.Vehiculos.ToListAsync();
+            var personasDto = await GetPersonaSelectList();
+            var vehiculosDB = _vehiculoRepository.ObtenerTodos();
             var vehiculos = _mapper.Map<IEnumerable<VehiculoViewModel>>(vehiculosDB).ToList();
             vehiculos.ForEach(x => x.Titular = personasDto.FirstOrDefault(y => y.Value == x.TitularId.ToString()).Text);
 
@@ -46,14 +46,13 @@ namespace Vehiculos.App.Controllers
                 return NotFound();
             }
 
-            var vehiculo = await _context.Vehiculos
-                .FirstOrDefaultAsync(m => m.VehiculoId == id);
+            var vehiculo = _vehiculoRepository.ObtenerPorId(id ?? 0);
             if (vehiculo == null)
             {
                 return NotFound();
             }
 
-            var personasDto = await GetPersonaDtos();
+            var personasDto = await GetPersonaSelectList();
             var vehiculoViewModel = _mapper.Map<VehiculoViewModel>(vehiculo);
             vehiculoViewModel.Titular = personasDto.FirstOrDefault(y => y.Value == vehiculo.TitularId.ToString()).Text;
 
@@ -64,7 +63,7 @@ namespace Vehiculos.App.Controllers
         public async Task<IActionResult> Create()
         {
             var vehiculo = new VehiculoCreateViewModel();
-            var personasDto = await GetPersonaDtos();
+            var personasDto = await GetPersonaSelectList();
 
             vehiculo.TitularLista = personasDto;
             return View(vehiculo);
@@ -78,8 +77,7 @@ namespace Vehiculos.App.Controllers
             var vehiculo = _mapper.Map<Vehiculo>(vehiculoViewModel);
             if (ModelState.IsValid)
             {
-                _context.Add(vehiculo);
-                await _context.SaveChangesAsync();
+                _vehiculoRepository.Agregar(vehiculo);
                 return RedirectToAction(nameof(Index));
             }
             return View(vehiculo);
@@ -93,18 +91,15 @@ namespace Vehiculos.App.Controllers
                 return NotFound();
             }
 
-            var vehiculoDb = await _context.Vehiculos.FindAsync(id);
+            var vehiculoDb = _vehiculoRepository.ObtenerPorId(id ?? 0);
             if (vehiculoDb == null)
             {
                 return NotFound();
             }
 
             var vehiculo = _mapper.Map<VehiculoCreateViewModel>(vehiculoDb);
-            var personasDto = await GetPersonaDtos();
-
-            // Create a viewmodel, and create the dropdown
+            var personasDto = await GetPersonaSelectList();
             vehiculo.TitularLista = personasDto;
-            vehiculo.TitularId = vehiculoDb.TitularId;
             return View(vehiculo);
         }
 
@@ -123,8 +118,7 @@ namespace Vehiculos.App.Controllers
             {
                 try
                 {
-                    _context.Update(vehiculo);
-                    await _context.SaveChangesAsync();
+                    _vehiculoRepository.Actualizar(vehiculo);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -150,15 +144,14 @@ namespace Vehiculos.App.Controllers
                 return NotFound();
             }
 
-            var vehiculoDb = await _context.Vehiculos
-                .FirstOrDefaultAsync(m => m.VehiculoId == id);
+            var vehiculoDb = _vehiculoRepository.ObtenerPorId(id ?? 0);
             if (vehiculoDb == null)
             {
                 return NotFound();
             }
 
             var vehiculoViewModel = _mapper.Map<VehiculoViewModel>(vehiculoDb);
-            var personasDto = await GetPersonaDtos();
+            var personasDto = await GetPersonaSelectList();
             vehiculoViewModel.Titular = personasDto.FirstOrDefault(y => y.Value == vehiculoDb.TitularId.ToString()).Text;
 
             return View(vehiculoViewModel);
@@ -169,18 +162,17 @@ namespace Vehiculos.App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var vehiculo = await _context.Vehiculos.FindAsync(id);
-            _context.Vehiculos.Remove(vehiculo);
-            await _context.SaveChangesAsync();
+            var vehiculo = _vehiculoRepository.ObtenerPorId(id);
+            _vehiculoRepository.Remover(vehiculo);
             return RedirectToAction(nameof(Index));
         }
 
         private bool VehiculoExists(int id)
         {
-            return _context.Vehiculos.Any(e => e.VehiculoId == id);
+            return (_vehiculoRepository.ObtenerPorId(id) != null);
         }
 
-        private async Task<IEnumerable<SelectListItem>> GetPersonaDtos()
+        private async Task<IEnumerable<SelectListItem>> GetPersonaSelectList()
         {
             var personasFromApi = await _personaService.GetPersonasAsync();
 

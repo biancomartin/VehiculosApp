@@ -27,7 +27,8 @@ namespace Vehiculos.App.Mapping
             CreateMap<VehiculoCreateViewModel, Vehiculo>()
                 .ReverseMap();
 
-            CreateMap<VehiculoViewModel, Vehiculo>().ReverseMap();
+            CreateMap<VehiculoViewModel, Vehiculo>()
+                .ReverseMap();
         }
     }
 }

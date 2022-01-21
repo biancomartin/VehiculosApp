@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Vehiculos.AccesoDatos;
+using Vehiculos.AccesoDatos.Repositorios;
+using Vehiculos.AccesoDatos.Repositorios.Interfaces;
 using Vehiculos.App.Mapping;
 using Vehiculos.Servicios;
 using Vehiculos.Servicios.Interfaces;
@@ -32,6 +34,7 @@ namespace Vehiculos.App
             #region Dependency Injection
 
             services.AddScoped<IPersonaService, PersonaService>();
+            services.AddScoped<IVehiculoRepository, VehiculoRepository>();
 
             #endregion
 
