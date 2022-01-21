@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vehiculos.AccesoDatos;
+using Vehiculos.Modelos;
 using Vehiculos.Modelos.Dto;
 using Vehiculos.Models;
 using Vehiculos.Servicios.Interfaces;
@@ -28,9 +29,15 @@ namespace Vehiculos.App.Controllers
         public async Task<IActionResult> Index()
         {
             var personasFromApi = await _personaService.GetPersonasAsync();
-            var personasDto = _mapper.Map<IEnumerable<PersonaDto>>(personasFromApi.data);
-    
-            // Create a viewmodel, and create the dropdown
+
+            var personas = new List<Datos>();
+
+            var datos = personasFromApi.Select(x => x.data);
+            datos.ToList().ForEach(x => personas.AddRange(x));
+
+            var personasDto = _mapper.Map<IEnumerable<PersonaDto>>(personas);
+
+            //// Create a viewmodel, and create the dropdown
             ViewBag.Personas = personasDto;
 
             return View(await _context.Vehiculos.ToListAsync());

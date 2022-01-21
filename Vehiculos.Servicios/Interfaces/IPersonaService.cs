@@ -6,6 +6,6 @@ namespace Vehiculos.Servicios.Interfaces
 {
     public interface IPersonaService
     {
-        Task<Persona> GetPersonasAsync();
+        Task<IEnumerable<Persona>> GetPersonasAsync();
     }
 }

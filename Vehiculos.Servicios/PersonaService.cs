@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -23,12 +24,21 @@ namespace Vehiculos.Servicios
             _logger = logger;
         }
 
-        public async Task<Persona> GetPersonasAsync()
+        public async Task<IEnumerable<Persona>> GetPersonasAsync()
         {
             try
             {
-                using var responseStream = await _client.GetStreamAsync(_configuration.GetValue<string>("TitularesAPI:URLBase"));
-                var response = await JsonSerializer.DeserializeAsync<Persona>(responseStream);
+                int pages = _configuration.GetValue<int>("TitularesAPI:PagesToCheck");
+                List<Persona> response = new List<Persona>();
+                for (int i=1; i<= pages; i++)
+                {
+                    using var responseStream = await _client.GetStreamAsync(_configuration.GetValue<string>("TitularesAPI:URLBase") + $"?page={i}");
+                    var personas = await JsonSerializer.DeserializeAsync<Persona>(responseStream);
+                    if (personas.data.Any())
+                    {
+                        response.Add(personas);
+                    }
+                }
 
                 return response;
             }
