@@ -35,6 +35,7 @@
             <div class="form-group">
                 <label asp-for="Titular" class="control-label"></label>
                 <input asp-for="Titular" class="form-control" />
+                @*@Html.DropDownList("key", new SelectList(ViewBag.Personas, "Key", "Text"))*@
                 <span asp-validation-for="Titular" class="text-danger"></span>
             </div>
             <div class="form-group">
